@@ -1,0 +1,57 @@
+/* Стили для заголовка таблицы */
+#notesTable th {
+    background-color: #808080; /* Серый фон */
+    color: white; /* Белый текст */
+}
+
+/* Отступы между рядами таблицы */
+#notesTable tbody tr {
+    margin-bottom: 20px; /* 20px отступ снизу */
+}
+
+/* Отступы между рядами таблицы */
+.table-condensed tbody tr {
+    margin-bottom: 20px; /* 20px отступ снизу */
+}
+
+/* Стили для столбца "Created" */
+.created-column {
+    width: 140px;
+}
+
+/* Стили для столбца "Content" */
+.content-column {
+    max-height: 20px; /* Установите максимальную высоту, которая вам нужна */
+    overflow: hidden;
+}
+
+.IconContainer {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #808080;
+    display: flex;
+    align-items: center; /* Центрирование по вертикали */
+    justify-content: center; /* Центрирование по горизонтали */
+}
+.CategoryIcon {
+    width: 20px; /* Измените размер значка по вашему усмотрению */
+    height: 20px; /* Измените размер значка по вашему усмотрению */
+}
+.ToolIcon{
+    width: 30px;
+    height: 30px;
+}
+#createButton {
+    display: flex;
+    justify-content: flex-end;
+}
+.table{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+}

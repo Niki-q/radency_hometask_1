@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes Web App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-<h1>Notes:</h1>
-<ul id="objectList"></ul>
+<div class="container">
+    <table class="table table-striped table-condensed">
+        <thead class = 'h1' id="thead"></thead>
+        <tbody id="notesTable" >
+        <tr class="TableHeader">
+            <th></th>
+            <th>Name</th>
+            <th class="created-column">Created</th>
+            <th>Category</th>
+            <th class="content-column">Content</th>
+            <th>Dates</th>
+            <th></th>
+            <th></th>
+            <th><img id = 'ArchiveSwitch' class = 'ToolIcon' src = '' alt ='Button to switch Archive/Active table'></th>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="createButton"><button class="btn btn-secondary" >Create New</button></div>
+
+    <img src="data/reference.png" alt="reference view from assignment ">
+</div>
+<!-- Подключаем Bootstrap JS с CDN (необходимо для некоторых функциональных возможностей Bootstrap) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <script type="module" src="index.js">
 </script>
 </body>
