@@ -8,6 +8,27 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
+<!-- Модальное окно -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="taskFormTitle">Создать новую задачу</h2>
+        <form id="taskForm">
+            <!-- Здесь разместите поля формы для создания задачи -->
+            <!-- Например: -->
+            <label for="name">Task name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+            <label for="category">Task category:</label><br>
+            <select id="category" name="category"><br>
+                <!-- Здесь будут добавлены варианты выбора из JavaScript -->
+            </select><br>
+            <label for="content">Task content:</label><br>
+            <input type="text" id="content" name="content" required><br><br>
+
+            <button id="taskFormButton" type="submit">Создать</button>
+        </form>
+    </div>
+</div>
 <div class="container">
     <table class="table table-striped table-condensed">
         <thead class = 'h1' id="thead"></thead>
@@ -26,7 +47,7 @@
         </tbody>
     </table>
 
-    <div id="createButton"><button class="btn btn-secondary" >Create New</button></div>
+    <div class="createButtonContainer"><button id ='createButton' class="btn btn-secondary" >Create New</button></div>
 
     <img src="data/reference.png" alt="reference view from assignment ">
 </div>

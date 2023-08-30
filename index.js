@@ -87,6 +87,9 @@ const refreshTable = function (){
 
 // Listeners
 
+
+// Archive functional
+
 const ArchiveSwitch = document.getElementById('ArchiveSwitch')
 
 let ArchiveView = false
@@ -95,7 +98,70 @@ ArchiveSwitch.addEventListener('click',() =>{
     refreshTable()
 } )
 
+// Modal window
+
+const modal = document.getElementById('myModal');
+const createButton = document.querySelector('#createButton');
+const categoryCounts = Data.getCategoryCounts()
+
+const taskForm = document.getElementById('taskForm');
+const taskFormInputNodes = taskForm.getElementsByTagName('input')
+const taskFormSelectNode = document.getElementById('category')
+
+createButton.addEventListener('click', function() {
+    openModal('Add new Note', 'Create', false)
+
+    taskForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        Data.addNote(taskFormInputNodes.name.value, taskFormInputNodes.content.value, taskFormSelectNode.value)
+        console.log(`Note with name='${taskFormInputNodes.name.value}' has been added`)
+        refreshTable()
+        closeModal()
+    });
+
+});
+
+const openModal = function (title, button_text, edit){
+    const taskFormTitle = document.getElementById('taskFormTitle')
+    const taskFormButton = document.getElementById('taskFormButton')
+    taskFormTitle.textContent = title
+    taskFormButton.textContent = button_text
+
+    modal.style.display = 'block';
+
+    // if (edit){
+    //     taskForm.reset()
+    // }
+}
+
+const closeModal = function (){
+    modal.style.display = 'none';
+
+}
+
+const closeButton = modal.querySelector('.close');
+closeButton.addEventListener('click', function() {
+    closeModal()
+});
+
+window.addEventListener('click', function(event) {
+    if (event.target === modal) {
+        closeModal()
+    }
+});
+
 
 document.addEventListener('DOMContentLoaded',()=>{
     refreshTable()
+
+    const categoryOptions = Object.keys(categoryCounts)
+
+    categoryOptions.forEach(optionText => {
+        const option = document.createElement('option');
+        option.value = optionText; // Установите значение (value) для отправки на сервер
+        option.text = optionText;  // Установите текст, отображаемый в списке
+        taskFormSelectNode.appendChild(option);
+    });
+
 })

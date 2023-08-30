@@ -2,16 +2,6 @@
 
 const  svgFolderPath  =  './data/svg/'
 
-const defaultNotesList = [
-    new Note('Shoppingc list', 'Need to buy groceries and household essentials on 5/5/2021.', 'Task',false),
-    new Note('The theory of evolution','Planning to read about Darwin\'s theory of natural selection tomorrow, on 5/6/2021.','Random Thought',false),
-    new Note('New Feature','Implementing the \'undo\' feature in the app today, on 5/7/2021.','Idea',false),
-    new Note('William Gaddis','Starting to read \'The Recognitions\' by William Gaddis on 5/8/2021.','Quote',false),
-    new Note('Books','Returning borrowed books to the library on 5/9/2021.','Task',false),
-    new Note('Dentist','I’m gonna have a dentist appointment on the 3/5/2021, I moved it from 5/5/2021','Task',true),
-    new Note('a2', '','Quote',true)
-]
-
 
 // Classes
 
@@ -32,7 +22,6 @@ export class Note {
         while ((match = datePattern.exec(content)) !== null) {
             matches.push(match[0]);
         }
-
         this.dates = matches
     }
     getCategoryIconPath(){
@@ -55,7 +44,7 @@ export class Note {
         const tdContent = document.createElement("td");
         tdContent.textContent = this.content
         const tdDates = document.createElement("td");
-        tdContent.tdDates = this.dates.join(', ')
+        tdDates.textContent = this.dates.join(', ')
         iconContainer.appendChild(logoIcon);
         logoCell.appendChild(iconContainer);
 
@@ -75,6 +64,9 @@ class NoteStorage{
     getById(id){
         return this.getAllNotes().find(note => note.id===id)
     }
+    addNote(name, content, category){
+        this.actual.push(new Note(name, content, category, false))
+    }
     archiveNote(id){
         const mustBeArchiveNote = this.getById(id)
 
@@ -89,6 +81,28 @@ class NoteStorage{
         this.archived = this.archived.filter(note => note !== mustBeUnArchiveNote)
         this.actual.push(mustBeUnArchiveNote)
         mustBeUnArchiveNote.isArchived = false
+    }
+    getCategoryCounts(){
+        let categories_archived =  this.archived.map(note => note.category)
+        let categories_actual = this.actual.map(note => note.category)
+
+        // Создайте объект для хранения результатов
+        const categoryCounts = {};
+
+        categories_actual.forEach(category => {
+            // Инициализируйте счетчики для каждой категории
+            categoryCounts[category] = [0, 0];
+        });
+
+        categories_actual.forEach(category => {
+            categoryCounts[category][0]++; // Увеличьте счетчик для актуальных заметок
+        });
+
+        categories_archived.forEach(category => {
+            categoryCounts[category][1]++; // Увеличьте счетчик для заметок в архиве
+        });
+
+        return categoryCounts
     }
 }
 
@@ -105,11 +119,17 @@ function formatDateToMonthDDYYYY(date) {
     return date.toLocaleDateString('en-US', options);
 }
 
-
-// Export variables
-
 export const getIconPath = function (name){
     return `${svgFolderPath}${name}.svg`
 }
 
+const defaultNotesList = [
+    new Note('Shoppingc list', 'Need to buy groceries and household essentials on 5/5/2021.', 'Task',false),
+    new Note('The theory of evolution','Planning to read about Darwin\'s theory of natural selection tomorrow, on 5/6/2021.','Random Thought',false),
+    new Note('New Feature','Implementing the \'undo\' feature in the app today, on 5/7/2021.','Idea',false),
+    new Note('William Gaddis','Starting to read \'The Recognitions\' by William Gaddis on 5/8/2021.','Quote',false),
+    new Note('Books','Returning borrowed books to the library on 5/9/2021.','Task',false),
+    new Note('Dentist','I’m gonna have a dentist appointment on the 3/5/2021, I moved it from 5/5/2021','Task',true),
+    new Note('a2', '','Quote',true)
+]
 export const Data = new NoteStorage(defaultNotesList)
