@@ -92,6 +92,15 @@ class NoteStorage{
         this.actual.push(mustBeUnArchiveNote)
         mustBeUnArchiveNote.isArchived = false
     }
+    deleteNote(id){
+        const note = this.getById(id)
+        if (note.isArchived){
+            this.archived = this.archived.filter(note => note.id !== id)
+        }
+        else {
+            this.actual = this.actual.filter(note => note.id !== id)
+        }
+    }
     getCategoryCounts(){
         let categories_archived =  this.archived.map(note => note.category)
         let categories_actual = this.actual.map(note => note.category)

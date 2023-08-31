@@ -35,7 +35,7 @@ const fillTable = function (data, name){
         const deleteButtonCell = document.createElement("td");
         const deleteButton = document.createElement("img");
         deleteButton.src = getIconPath('Delete')
-        deleteButton.className = 'ToolIcon'
+        deleteButton.className = 'ToolIcon DeleteButton'
         deleteButtonCell.appendChild(deleteButton);
         trNote.appendChild(deleteButtonCell);
 
@@ -63,7 +63,7 @@ const refreshTable = function (){
         fillTable(Data.actual,'Actual Notes')
     }
 
-    // refresh listeners to buttons
+    // refresh listeners to tool buttons
 
     const ArchiveButtons = document.getElementsByClassName('ArchiveButton')
 
@@ -93,6 +93,19 @@ const refreshTable = function (){
         });
     }
 
+    const DeleteButtons = document.getElementsByClassName('DeleteButton')
+
+    for (const button of DeleteButtons) {
+        button.addEventListener('click', function() {
+            const parentElement = this.closest('tr');
+            if (parentElement) {
+                const parentId = parentElement.id;
+                Data.deleteNote(parentId)
+                refreshTable()
+                console.log(`Note with id='${parentId}' has been deleted`)
+            }
+        });
+    }
 }
 
 
