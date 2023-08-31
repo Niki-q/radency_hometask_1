@@ -13,7 +13,7 @@ const fillTable = function (data, name){
         const editButtonCell = document.createElement("td");
         const editButton = document.createElement("img");
         editButton.src = getIconPath('Edit')
-        editButton.className = 'ToolIcon'
+        editButton.className = 'ToolIcon EditButton'
         editButtonCell.appendChild(editButton);
         trNote.appendChild(editButtonCell);
 
@@ -80,6 +80,18 @@ const refreshTable = function (){
             }
         });
     }
+    const EditButtons = document.getElementsByClassName('EditButton')
+
+    for (const button of EditButtons) {
+        button.addEventListener('click', function() {
+            const parentElement = this.closest('tr');
+            if (parentElement) {
+                const parentId = parentElement.id;
+                openModal('Edit Note', 'Save changes', parentId)
+                // refreshTable()
+            }
+        });
+    }
 
 }
 
@@ -110,29 +122,49 @@ const taskFormSelectNode = document.getElementById('category')
 
 createButton.addEventListener('click', function() {
     openModal('Add new Note', 'Create', false)
+});
 
-    taskForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+taskForm.addEventListener('submit', function(event) {
+    event.preventDefault();
 
+    if (taskForm.attributes.mode.value === 'Create'){
         Data.addNote(taskFormInputNodes.name.value, taskFormInputNodes.content.value, taskFormSelectNode.value)
         console.log(`Note with name='${taskFormInputNodes.name.value}' has been added`)
-        refreshTable()
-        closeModal()
-    });
-
+    }
+    else{
+        Data.editNote(taskForm.attributes.edit_id.value, {
+            name:taskFormInputNodes.name.value,
+            content:taskFormInputNodes.content.value,
+            category:taskFormSelectNode.value
+        })
+        console.log('Note with id='+taskForm.attributes.edit_id.value+' has been edited')
+    }
+    console.log(Data.getAllNotes())
+    refreshTable()
+    closeModal()
 });
 
 const openModal = function (title, button_text, edit){
+    if (edit){
+        taskForm.reset()
+        taskForm.setAttribute('mode', 'Edit')
+        taskForm.setAttribute('edit_id', edit)
+
+        const editNote = Data.getById(edit)
+        taskFormInputNodes.name.value = editNote.name
+        taskFormInputNodes.content.value = editNote.content
+        taskFormSelectNode.value = editNote.category
+
+    }
+    else{
+        taskForm.setAttribute('mode', 'Create')
+    }
+
     const taskFormTitle = document.getElementById('taskFormTitle')
     const taskFormButton = document.getElementById('taskFormButton')
     taskFormTitle.textContent = title
     taskFormButton.textContent = button_text
-
     modal.style.display = 'block';
-
-    // if (edit){
-    //     taskForm.reset()
-    // }
 }
 
 const closeModal = function (){

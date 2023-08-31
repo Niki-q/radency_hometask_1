@@ -6,24 +6,24 @@ const  svgFolderPath  =  './data/svg/'
 // Classes
 
 export class Note {
-    constructor(name, content, category, archived) {
+    constructor(name, content, category, archived, randomDate) {
         this.id = generateUniqueId()
         this.name = name
-        this.created = formatDateToMonthDDYYYY(new Date())
         this.content = content
         this.category = category
         this.isArchived = archived
 
-        const datePattern = /\d{1,2}\/\d{1,2}\/\d{4}/g;
+        this.dates = getDatesFromText(content)
 
-        const matches = [];
-        let match;
-
-        while ((match = datePattern.exec(content)) !== null) {
-            matches.push(match[0]);
+        if (!randomDate)
+            this.created = formatDateToMonthDDYYYY(new Date())
+        else{
+            const currentDate = new Date()
+            this.created = formatDateToMonthDDYYYY(new Date(currentDate.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000))
         }
-        this.dates = matches
+
     }
+
     getCategoryIconPath(){
         return getIconPath(this.category)
     }
@@ -50,6 +50,9 @@ export class Note {
 
         tr.append(logoCell, tdName, tdCreated, tdCategory, tdContent, tdDates)
     }
+    setParam(param_name, param){
+        this[param_name] = param
+    }
 }
 
 class NoteStorage{
@@ -66,6 +69,13 @@ class NoteStorage{
     }
     addNote(name, content, category){
         this.actual.push(new Note(name, content, category, false))
+    }
+    editNote(id, fields){
+        const noteToEdit = this.getById(id)
+        noteToEdit.setParam('name',fields.name)
+        noteToEdit.setParam('content',fields.content)
+        noteToEdit.setParam('category',fields.category)
+        noteToEdit.setParam('dates',getDatesFromText(fields.content))
     }
     archiveNote(id){
         const mustBeArchiveNote = this.getById(id)
@@ -107,6 +117,18 @@ class NoteStorage{
 }
 
 
+function getDatesFromText(content) {
+    const datePattern = /\d{1,2}\/\d{1,2}\/\d{4}/g;
+
+    const matches = [];
+    let match;
+
+    while ((match = datePattern.exec(content)) !== null) {
+        matches.push(match[0]);
+    }
+    return matches
+}
+
 function generateUniqueId() {
     const timestamp = Date.now().toString(36);
     const randomPart = Math.random().toString(36).substr(2, 5);
@@ -124,12 +146,12 @@ export const getIconPath = function (name){
 }
 
 const defaultNotesList = [
-    new Note('Shoppingc list', 'Need to buy groceries and household essentials on 5/5/2021.', 'Task',false),
-    new Note('The theory of evolution','Planning to read about Darwin\'s theory of natural selection tomorrow, on 5/6/2021.','Random Thought',false),
-    new Note('New Feature','Implementing the \'undo\' feature in the app today, on 5/7/2021.','Idea',false),
-    new Note('William Gaddis','Starting to read \'The Recognitions\' by William Gaddis on 5/8/2021.','Quote',false),
-    new Note('Books','Returning borrowed books to the library on 5/9/2021.','Task',false),
-    new Note('Dentist','I’m gonna have a dentist appointment on the 3/5/2021, I moved it from 5/5/2021','Task',true),
+    new Note('Shoppingc list', 'Need to buy groceries and household essentials on 5/5/2021.', 'Task',false,true),
+    new Note('The theory of evolution','Planning to read about Darwin\'s theory of natural selection tomorrow, on 5/6/2021.','Random Thought',false,true),
+    new Note('New Feature','Implementing the \'undo\' feature in the app today, on 5/7/2021.','Idea',false,true),
+    new Note('William Gaddis','Starting to read \'The Recognitions\' by William Gaddis on 5/8/2021.','Quote',false,true),
+    new Note('Books','Returning borrowed books to the library on 5/9/2021.','Task',false,true),
+    new Note('Dentist','I’m gonna have a dentist appointment on the 3/5/2021, I moved it from 5/5/2021','Task',true,true),
     new Note('a2', '','Quote',true)
 ]
 export const Data = new NoteStorage(defaultNotesList)
