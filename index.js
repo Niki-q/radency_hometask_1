@@ -2,7 +2,9 @@ import {Data, getIconPath} from './data/data.js'
 
 const notesTable = document.getElementById("notesTable");
 
-const fillTable = function (data, name){
+const categoriesTable = document.getElementById('categoriesTable')
+
+const fillNotesTable = function (data, name){
     const thead = document.getElementById('thead')
     thead.textContent = name
     data.forEach(note => {
@@ -46,23 +48,59 @@ const fillTable = function (data, name){
 
 }
 
-const clearTable = function (){
-    if (notesTable) {
-        while (notesTable.childElementCount > 1) {
-            notesTable.removeChild(notesTable.lastElementChild);
+const fillCategoriesTable = function (){
+    const categoryResults = Data.getCategoryCounts()
+    for (const key in categoryResults){
+        const [active, archived] = categoryResults[key]
+
+        const trCategory = document.createElement("tr");
+
+
+        const tdCatIcon = document.createElement("td");
+        const iconContainer = document.createElement("div")
+        iconContainer.className = 'IconContainer'
+        const logoIcon = document.createElement("img");
+        logoIcon.src = getIconPath(key)
+        logoIcon.className = 'CategoryIcon'
+        iconContainer.appendChild(logoIcon);
+        tdCatIcon.appendChild(iconContainer);
+
+        const tdCatName = document.createElement("td");
+
+        tdCatName.textContent = key
+
+        const tdCatActive = document.createElement("td");
+
+        tdCatActive.textContent = active
+
+        const tdCatArchived = document.createElement("td");
+
+        tdCatArchived.textContent = archived
+
+        trCategory.append(tdCatIcon, tdCatName,tdCatActive,tdCatArchived)
+        categoriesTable.appendChild(trCategory)
+    }
+
+}
+
+const clearTable = function (table_body){
+    if (table_body) {
+        while (table_body.childElementCount > 1) {
+            table_body.removeChild(table_body.lastElementChild);
         }
     }
 }
 
 const refreshTable = function (){
-    clearTable()
+    clearTable(notesTable)
     if (ArchiveView){
-        fillTable(Data.archived,'Archive Notes')
+        fillNotesTable(Data.archived,'Archive Notes')
     }
     else {
-        fillTable(Data.actual,'Actual Notes')
+        fillNotesTable(Data.actual,'Actual Notes')
     }
-
+    clearTable(categoriesTable)
+    fillCategoriesTable()
     // refresh listeners to tool buttons
 
     const ArchiveButtons = document.getElementsByClassName('ArchiveButton')
@@ -208,5 +246,4 @@ document.addEventListener('DOMContentLoaded',()=>{
         option.text = optionText;  // Установите текст, отображаемый в списке
         taskFormSelectNode.appendChild(option);
     });
-
 })

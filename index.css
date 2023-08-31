@@ -1,11 +1,11 @@
 /* Стили для заголовка таблицы */
-#notesTable th {
+th {
     background-color: #808080; /* Серый фон */
     color: white; /* Белый текст */
 }
 
 /* Отступы между рядами таблицы */
-#notesTable tbody tr {
+tbody tr {
     margin-bottom: 20px; /* 20px отступ снизу */
 }
 
@@ -45,9 +45,10 @@
 .createButtonContainer {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 10rem;
+    margin-bottom: 1rem;
 }
 .table{
+    width: 100%;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -86,4 +87,7 @@
 
 #content{
     width: 100%;
+}
+.category-column{
+    width: 32%;
 }

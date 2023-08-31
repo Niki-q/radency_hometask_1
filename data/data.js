@@ -34,6 +34,8 @@ export class Note {
         const logoIcon = document.createElement("img");
         logoIcon.src = this.getCategoryIconPath()
         logoIcon.className = 'CategoryIcon'
+        iconContainer.appendChild(logoIcon);
+        logoCell.appendChild(iconContainer);
 
         const tdName = document.createElement("td");
         tdName.textContent = this.name
@@ -45,8 +47,7 @@ export class Note {
         tdContent.textContent = this.content
         const tdDates = document.createElement("td");
         tdDates.textContent = this.dates.join(', ')
-        iconContainer.appendChild(logoIcon);
-        logoCell.appendChild(iconContainer);
+
 
         tr.append(logoCell, tdName, tdCreated, tdCategory, tdContent, tdDates)
     }
@@ -104,11 +105,12 @@ class NoteStorage{
     getCategoryCounts(){
         let categories_archived =  this.archived.map(note => note.category)
         let categories_actual = this.actual.map(note => note.category)
+        let all_categories = this.getAllNotes().map(note => note.category)
 
         // Создайте объект для хранения результатов
         const categoryCounts = {};
 
-        categories_actual.forEach(category => {
+        all_categories.forEach(category => {
             // Инициализируйте счетчики для каждой категории
             categoryCounts[category] = [0, 0];
         });
