@@ -1,0 +1,93 @@
+/* Стили для заголовка таблицы */
+th {
+    background-color: #808080; /* Серый фон */
+    color: white; /* Белый текст */
+}
+
+/* Отступы между рядами таблицы */
+tbody tr {
+    margin-bottom: 20px; /* 20px отступ снизу */
+}
+
+/* Отступы между рядами таблицы */
+.table-condensed tbody tr {
+    margin-bottom: 20px; /* 20px отступ снизу */
+}
+
+/* Стили для столбца "Created" */
+.created-column {
+    width: 140px;
+}
+
+/* Стили для столбца "Content" */
+.content-column {
+    max-height: 20px; /* Установите максимальную высоту, которая вам нужна */
+    overflow: hidden;
+}
+
+.IconContainer {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #808080;
+    display: flex;
+    align-items: center; /* Центрирование по вертикали */
+    justify-content: center; /* Центрирование по горизонтали */
+}
+.CategoryIcon {
+    width: 20px; /* Измените размер значка по вашему усмотрению */
+    height: 20px; /* Измените размер значка по вашему усмотрению */
+}
+.ToolIcon{
+    width: 30px;
+    height: 30px;
+}
+.createButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+.table{
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+}
+
+/* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+}
+
+#content{
+    width: 100%;
+}
+.category-column{
+    width: 32%;
+}
