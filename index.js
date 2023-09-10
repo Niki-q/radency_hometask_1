@@ -2,51 +2,52 @@ import {Data, getIconPath} from './data/data.js'
 
 const notesTable = document.getElementById("notesTable");
 
-const categoriesTable = document.getElementById('categoriesTable')
+const createHtmlTdToolButton = function (src, classname){
+    const buttonCell = document.createElement('td')
+    const button = document.createElement('img')
+    button.src = src
+    button.className = `ToolIcon ${classname}`
+    buttonCell.appendChild(button)
+    return buttonCell
+}
+
+const createHtmlTdCategoryIcon = function (src){
+    const logoCell = document.createElement("td");
+    const iconContainer = document.createElement("div")
+    iconContainer.className = 'IconContainer'
+    const logoIcon = document.createElement("img");
+    logoIcon.src = src
+    logoIcon.className = 'CategoryIcon'
+    iconContainer.appendChild(logoIcon);
+    logoCell.appendChild(iconContainer);
+    return logoCell
+}
 
 const fillNotesTable = function (data, name){
     const thead = document.getElementById('thead')
     thead.textContent = name
     data.forEach(note => {
         const trNote = document.createElement("tr");
+        trNote.appendChild(createHtmlTdCategoryIcon(note.getCategoryIconPath()))
 
         note.toTableTr(trNote)
 
-        const editButtonCell = document.createElement("td");
-        const editButton = document.createElement("img");
-        editButton.src = getIconPath('Edit')
-        editButton.className = 'ToolIcon EditButton'
-        editButtonCell.appendChild(editButton);
-        trNote.appendChild(editButtonCell);
+        trNote.appendChild(createHtmlTdToolButton(getIconPath('Edit'), 'EditButton'));
 
-        const archiveButtonCell = document.createElement("td");
-        const archiveButton = document.createElement("img");
+        let direction = ArchiveView ? 'Up' : 'Down';
+        trNote.appendChild(createHtmlTdToolButton(getIconPath(`Archive ${direction}`), 'ArchiveButton'))
         const ArchiveViewButton = document.getElementById('ArchiveSwitch')
-        if (ArchiveView){
-            archiveButton.src = getIconPath('Archive Up')
-            ArchiveViewButton.src =getIconPath('Archive Up White')
-        }
-        else {
-            archiveButton.src = getIconPath('Archive Down')
-            ArchiveViewButton.src =getIconPath('Archive Down White')
-        }
-        archiveButton.className = 'ToolIcon ArchiveButton'
-        archiveButtonCell.appendChild(archiveButton);
-        trNote.appendChild(archiveButtonCell);
+        ArchiveViewButton.src =getIconPath(`Archive ${direction} White`)
 
-        const deleteButtonCell = document.createElement("td");
-        const deleteButton = document.createElement("img");
-        deleteButton.src = getIconPath('Delete')
-        deleteButton.className = 'ToolIcon DeleteButton'
-        deleteButtonCell.appendChild(deleteButton);
-        trNote.appendChild(deleteButtonCell);
-
+        trNote.appendChild(createHtmlTdToolButton(getIconPath('Delete'), 'DeleteButton'));
 
         trNote.id = note.id
         notesTable.appendChild(trNote);
     });
 
 }
+
+const categoriesTable = document.getElementById('categoriesTable')
 
 const fillCategoriesTable = function (){
     const categoryResults = Data.getCategoryCounts()
@@ -55,32 +56,20 @@ const fillCategoriesTable = function (){
 
         const trCategory = document.createElement("tr");
 
-
-        const tdCatIcon = document.createElement("td");
-        const iconContainer = document.createElement("div")
-        iconContainer.className = 'IconContainer'
-        const logoIcon = document.createElement("img");
-        logoIcon.src = getIconPath(key)
-        logoIcon.className = 'CategoryIcon'
-        iconContainer.appendChild(logoIcon);
-        tdCatIcon.appendChild(iconContainer);
+        const tdCatIcon = createHtmlTdCategoryIcon(getIconPath(key))
 
         const tdCatName = document.createElement("td");
-
         tdCatName.textContent = key
 
         const tdCatActive = document.createElement("td");
-
         tdCatActive.textContent = active
 
         const tdCatArchived = document.createElement("td");
-
         tdCatArchived.textContent = archived
 
         trCategory.append(tdCatIcon, tdCatName,tdCatActive,tdCatArchived)
         categoriesTable.appendChild(trCategory)
     }
-
 }
 
 const clearTable = function (table_body){
@@ -93,59 +82,42 @@ const clearTable = function (table_body){
 
 const refreshTable = function (){
     clearTable(notesTable)
-    if (ArchiveView){
-        fillNotesTable(Data.archived,'Archive Notes')
-    }
-    else {
-        fillNotesTable(Data.actual,'Actual Notes')
-    }
+    fillNotesTable(ArchiveView ? Data.archived : Data.actual, ArchiveView ? 'Archive Notes' : 'Actual Notes')
     clearTable(categoriesTable)
     fillCategoriesTable()
+
     // refresh listeners to tool buttons
-
-    const ArchiveButtons = document.getElementsByClassName('ArchiveButton')
-
-    for (const button of ArchiveButtons) {
-        button.addEventListener('click', function() {
-            const parentElement = this.closest('tr');
-            if (parentElement) {
-                const parentId = parentElement.id;
-                if (Data.getById(parentId).isArchived)
-                    Data.unArchiveNote(parentId)
-                else
-                    Data.archiveNote(parentId)
-                refreshTable()
-            }
-        });
-    }
-    const EditButtons = document.getElementsByClassName('EditButton')
-
-    for (const button of EditButtons) {
-        button.addEventListener('click', function() {
-            const parentElement = this.closest('tr');
-            if (parentElement) {
-                const parentId = parentElement.id;
-                openModal('Edit Note', 'Save changes', parentId)
-                // refreshTable()
-            }
-        });
+    const byClickButtons = function (buttons_class, callback){
+        const buttons = document.getElementsByClassName(buttons_class)
+        for (const button of buttons){
+            button.addEventListener('click', (ev) => {
+                const parentElement = ev.target.closest('tr');
+                if (parentElement) {
+                    const parentId = parentElement.id;
+                    const Note = Data.getById(parentId)
+                    if (Note) {
+                        callback(parentId)
+                    }
+                }
+            })
+        }
     }
 
-    const DeleteButtons = document.getElementsByClassName('DeleteButton')
+    byClickButtons('ArchiveButton', (parent_id)=>{
+        Data.getById(parent_id).isArchived ? Data.unArchiveNote(parent_id) : Data.archiveNote(parent_id)
+        refreshTable()
+    })
+    byClickButtons('EditButton', (parent_id)=>{
+        openModal('Edit Note', 'Save changes', parent_id)
+    })
 
-    for (const button of DeleteButtons) {
-        button.addEventListener('click', function() {
-            const parentElement = this.closest('tr');
-            if (parentElement) {
-                const parentId = parentElement.id;
-                Data.deleteNote(parentId)
-                refreshTable()
-                console.log(`Note with id='${parentId}' has been deleted`)
-            }
-        });
-    }
+    byClickButtons('DeleteButton', (parent_id) => {
+        Data.deleteNote(parent_id)
+        refreshTable()
+        console.log(`Note with id='${parent_id}' has been deleted`)
+    })
+
 }
-
 
 
 // Listeners
@@ -190,7 +162,6 @@ taskForm.addEventListener('submit', function(event) {
         })
         console.log('Note with id='+taskForm.attributes.edit_id.value+' has been edited')
     }
-    console.log(Data.getAllNotes())
     refreshTable()
     closeModal()
 });
@@ -205,7 +176,6 @@ const openModal = function (title, button_text, edit){
         taskFormInputNodes.name.value = editNote.name
         taskFormInputNodes.content.value = editNote.content
         taskFormSelectNode.value = editNote.category
-
     }
     else{
         taskForm.setAttribute('mode', 'Create')
@@ -220,7 +190,6 @@ const openModal = function (title, button_text, edit){
 
 const closeModal = function (){
     modal.style.display = 'none';
-
 }
 
 const closeButton = modal.querySelector('.close');
@@ -233,13 +202,10 @@ window.addEventListener('click', function(event) {
         closeModal()
     }
 });
-
-
 document.addEventListener('DOMContentLoaded',()=>{
     refreshTable()
 
     const categoryOptions = Object.keys(categoryCounts)
-
     categoryOptions.forEach(optionText => {
         const option = document.createElement('option');
         option.value = optionText; // Установите значение (value) для отправки на сервер

@@ -1,6 +1,6 @@
 //  Constants
 
-const  svgFolderPath  =  './data/svg/'
+const svgFolderPath  =  './data/svg/'
 
 
 // Classes
@@ -28,15 +28,6 @@ export class Note {
         return getIconPath(this.category)
     }
     toTableTr(tr){
-        const logoCell = document.createElement("td");
-        const iconContainer = document.createElement("div")
-        iconContainer.className = 'IconContainer'
-        const logoIcon = document.createElement("img");
-        logoIcon.src = this.getCategoryIconPath()
-        logoIcon.className = 'CategoryIcon'
-        iconContainer.appendChild(logoIcon);
-        logoCell.appendChild(iconContainer);
-
         const tdName = document.createElement("td");
         tdName.textContent = this.name
         const tdCreated = document.createElement("td");
@@ -48,8 +39,7 @@ export class Note {
         const tdDates = document.createElement("td");
         tdDates.textContent = this.dates.join(', ')
 
-
-        tr.append(logoCell, tdName, tdCreated, tdCategory, tdContent, tdDates)
+        tr.append(tdName, tdCreated, tdCategory, tdContent, tdDates)
     }
     setParam(param_name, param){
         this[param_name] = param
@@ -66,7 +56,12 @@ class NoteStorage{
         return this.actual.concat(this.archived)
     }
     getById(id){
-        return this.getAllNotes().find(note => note.id===id)
+        try{
+            const Note = this.getAllNotes().find(note => note.id===id)
+            return Note || (() => { throw new TypeError(`Not found a note with id ${id}. This may happened if you edit HTML tags`) })();
+        }catch (e){
+            console.log(e)
+        }
     }
     addNote(name, content, category){
         this.actual.push(new Note(name, content, category, false))
@@ -163,6 +158,12 @@ const defaultNotesList = [
     new Note('William Gaddis','Starting to read \'The Recognitions\' by William Gaddis on 5/8/2021.','Quote',false,true),
     new Note('Books','Returning borrowed books to the library on 5/9/2021.','Task',false,true),
     new Note('Dentist','I’m gonna have a dentist appointment on the 3/5/2021, I moved it from 5/5/2021','Task',true,true),
-    new Note('a2', '','Quote',true)
+    new Note(
+        'Inspirational Quote',
+        'The only way to do great work is to love what you do. - Steve Jobs\nDates: 8/15/2023, 8/20/2023, 8/25/2023',
+        'Quote',
+        true,
+        true
+    )
 ]
 export const Data = new NoteStorage(defaultNotesList)
